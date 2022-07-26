@@ -18,7 +18,7 @@ namespace TestProject1
             expireDate = DateTime.Now,
             fullyUsedDate = new DateTime(),
             serialNumber = "789",
-            imageString = "imageString",
+            imageUrl = "imageUrl",
             id = "company789"
 
         };

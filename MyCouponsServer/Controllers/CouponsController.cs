@@ -9,10 +9,15 @@ using MyCouponsServer.Models;
 using Google.Cloud.Firestore;
 using System.Diagnostics;
 using Newtonsoft.Json;
-using System.Web.Http.Cors;
+using Microsoft.AspNetCore.Cors;
+//using System.Web.Http.Cors;
+using Firebase.Storage;
+
 
 namespace MyCouponsServer.Controllers
 {
+    [EnableCors("corspolicy")]
+
     [Route("api/[controller]")]
     [ApiController]
     public class CouponsController : ControllerBase
@@ -27,7 +32,7 @@ namespace MyCouponsServer.Controllers
         //TODO: get all docs
          //GET: api/Coupons/username
         [HttpGet("{username}")]
-        public async Task<ActionResult<IEnumerable<Coupon>>> GetCouponsList(string username)
+        public async Task<ActionResult<IEnumerable<String>>> GetCouponsList(string username)
         {
             List<Coupon> couponsOutput = new List<Coupon>();
             try
@@ -50,19 +55,19 @@ namespace MyCouponsServer.Controllers
                             expireDate = expire,
                             fullyUsedDate = used,
                             serialNumber = (string)couponData["serialNumber"],
-                            imageString = (string)couponData["imageString"],
+                            imageUrl = (string)couponData["imageUrl"],
                             id = ((string)couponData["company"] + (string)couponData["serialNumber"])
 
                         };
                         couponsOutput.Add(couponToAdd);
 
-
                     }
                     Console.WriteLine("");
                 }
 
-
-                return Ok(couponsOutput);
+               string jsonString = JsonConvert.SerializeObject(couponsOutput);
+                
+                return Ok(jsonString);
             }
             catch
             {
@@ -83,6 +88,7 @@ namespace MyCouponsServer.Controllers
             if (snapshot.Exists)
             {
                 Dictionary<string, object> snapDict = snapshot.ToDictionary();
+
                 foreach (KeyValuePair<string, object> pair in snapDict)
                 {
                     Dictionary<string, object> usageData = (Dictionary<string, object>) pair.Value;
@@ -119,33 +125,73 @@ namespace MyCouponsServer.Controllers
         //{ 
         //    return Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(datetimeStr), DateTimeKind.Utc));
         //}
+
+
+        public class Image
+        {
+
+            public int Id { get; set; }
+            public string FileName { get; set; }
+            public byte[] Picture { get; set; }
+
+        }
+
         // POST: api/Coupons/newcoupon/username
         [HttpPost("newcoupon/{username}")]
-        public string AddCoupon(string username, [FromForm] Coupon data)
+        public async Task<IActionResult> AddCoupon(string username, [FromForm] Coupon data)
         {
-            DocumentReference docRef = db.Collection("Users").Document($"{username}/CouponsList/{data.id}");
-            Timestamp expireDate = Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(data.expireDateStr), DateTimeKind.Utc));
-            Timestamp fullyUsedDate = new Timestamp();
-            Dictionary<string, object> coupon = new Dictionary<string, object>
+            string imageUrl;
+            try
             {
+                var stream = data.Image.OpenReadStream();
+                // Construct FirebaseStorage with path to where you want to upload the file and put it there
+                var task = new FirebaseStorage("mycoupons-6058d.appspot.com")
+                 .Child("Users")
+                 .Child($"{username}")
+                 .Child("CouponsList")
+                 .Child($"{data.id}")
+                 .PutAsync(stream);
+
+                 imageUrl = await task;
+
+            }
+            catch
+            {
+                imageUrl = "";
+            }
+
+
+            try
+            {
+                DocumentReference docRef = db.Collection("Users").Document($"{username}/CouponsList/{data.id}");
+                Timestamp expireDate = Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(data.expireDateStr), DateTimeKind.Utc));
+                Timestamp fullyUsedDate = new Timestamp();
+                Dictionary<string, object> coupon = new Dictionary<string, object>
+            {
+                    { "id",data.id },
                     { "company",data.company },
                     { "ammount",data.ammount },
                     { "originalAmmount",data.ammount },
                     { "expireDate",expireDate },
                     { "serialNumber",data.serialNumber },
-                    { "imageString",data.imageString },
+                    { "imageUrl",imageUrl },
                     { "fullyUsedDate",fullyUsedDate }
             };
 
-            Dictionary<string, object> couponToAdd = new Dictionary<string, object>
+                Dictionary<string, object> couponToAdd = new Dictionary<string, object>
             {
                 { data.id,coupon }
             };
-            docRef.SetAsync(couponToAdd);
+                docRef.SetAsync(couponToAdd);
 
 
 
-            return JsonConvert.SerializeObject(coupon);
+                return Ok(coupon);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Coupons/use/{username}/{id}
@@ -155,15 +201,19 @@ namespace MyCouponsServer.Controllers
             DocumentReference docRef = db.Collection($"Users/{username}/CouponsList").Document(id);
             DocumentReference archive = db.Collection($"Archive/CouponsList/{username}").Document(id);
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            if (snapshot.Exists)
+            {
+                Dictionary<string, object> docDict = snapshot.ToDictionary();
+                docDict.Add("dateDeleted", Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(DateTime.Now), DateTimeKind.Utc)));
+                archive.SetAsync(docDict);
 
-            Dictionary<string, object> docDict = snapshot.ToDictionary();
-            docDict["dateDeleted"]= Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(DateTime.Now), DateTimeKind.Utc));
-            archive.SetAsync(docDict);
+                await docRef.DeleteAsync();
 
-            await docRef.DeleteAsync();
+                return Ok("Deleted");
+            }
             
 
-            return Ok("deleted");
+            return BadRequest("Couldn't delete");
         }
 
     }

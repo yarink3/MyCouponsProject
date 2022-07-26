@@ -1,8 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using MyCouponsServer.Models;
+using Microsoft.Net.Http.Headers;
+
+var MyAllowSpecificOrigins = "_MyAllowSubdomainPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "corspolicy",
+                      build =>
+                      {
+                          build.WithOrigins("*")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -13,6 +26,8 @@ builder.Services.AddDbContext<CouponContext>(opt =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication();
 
 var app = builder.Build();
 
@@ -25,7 +40,9 @@ if (app.Environment.IsDevelopment())
     //app.UseSwaggerUI();
 }
 
+app.UseCors("corspolicy");
 app.UseHttpsRedirection();
+
 
 
 app.UseAuthorization();

@@ -285,3 +285,10 @@ C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCoupons
 C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\System.Web.Http.dll
 C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\System.Web.Http.Cors.dll
 C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\Firebase.Storage.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\FireSharp.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\Microsoft.Threading.Tasks.Extensions.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\Microsoft.Threading.Tasks.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\System.Net.Http.Extensions.dll
+C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\bin\Debug\net6.0\System.Net.Http.Primitives.dll

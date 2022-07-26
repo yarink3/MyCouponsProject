@@ -14,7 +14,8 @@ namespace MyCouponsServer.Models
         public string? fullyUsedDateStr { get; set; }
         public DateTime? fullyUsedDate { get; set; }
         public string? serialNumber { get; set; }
-        public string? imageString { get; set; }
-        
+        public string? imageUrl { get; set; }
+        public IFormFile? Image { get; set; }
+
     }
 }
