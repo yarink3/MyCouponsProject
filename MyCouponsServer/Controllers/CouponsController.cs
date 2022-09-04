@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MyCouponsServer.Models;
 using Google.Cloud.Firestore;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Cors;
-//using System.Web.Http.Cors;
 using Firebase.Storage;
-
+using System.Collections;
+using Google.Cloud.Storage.V1;
+using System.Net.Mail;
+using System.Net;
 
 namespace MyCouponsServer.Controllers
 {
@@ -23,10 +19,25 @@ namespace MyCouponsServer.Controllers
     public class CouponsController : ControllerBase
     {
         public FirestoreDb db = Database.Instance.db;
+        //public string BucketName = "mycoupons-6058d.appspot.com";
+        public string BucketName = "mycouponsstorage.appspot.com";
+        public StorageClient storage = StorageClient.Create();
+        public SmtpClient globalSmtpClient =
+        new SmtpClient
+        {
+            Host = "Smtp.Gmail.com",
+            Port = 587,
+            EnableSsl = true,
+            Timeout = 10000,
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            UseDefaultCredentials = false,
+            Credentials = new NetworkCredential("mycouponsorg@Gmail.com", "thnszmwogbnizqis")
+        } ;
 
+        
         public CouponsController()
         {
-            //_context = context;
+
         }
 
         //TODO: get all docs
@@ -39,35 +50,39 @@ namespace MyCouponsServer.Controllers
             {
                 Query allCoupons = db.Collection($"Users/{username}/CouponsList");
                 QuerySnapshot allCouponsSnapshot = await allCoupons.GetSnapshotAsync();
-                foreach (DocumentSnapshot documentSnapshot in allCouponsSnapshot.Documents)
+                foreach (DocumentSnapshot snapshotFromUser in allCouponsSnapshot.Documents)
                 {
-                    Dictionary<string, object> coupon = documentSnapshot.ToDictionary();
-                    foreach (KeyValuePair<string, object> pair in coupon)
+                    string couponId = snapshotFromUser.Id;
+
+                    DocumentReference coupon = db.Collection($"Coupons").Document(couponId);
+                    DocumentSnapshot snapshot = await coupon.GetSnapshotAsync();
+                    if (snapshot.Exists)
                     {
-                        Dictionary<string, object> couponData = (Dictionary<string, object>)pair.Value;
-                        DateTime expire = ((Timestamp)couponData["expireDate"]).ToDateTime();
-                        DateTime used = ((Timestamp)couponData["fullyUsedDate"]).ToDateTime();
+                        Dictionary<string, object> dbCouponData = snapshot.ToDictionary();
+
+                        DateTime expire = ((Timestamp)dbCouponData["expireDate"]).ToDateTime();
+                        DateTime used = ((Timestamp)dbCouponData["fullyUsedDate"]).ToDateTime();
 
                         Coupon couponToAdd = new Coupon
                         {
-                            company = (string)couponData["company"],
-                            ammount = (long)couponData["ammount"],
+                            company = (string)dbCouponData["company"],
+                            ammount = (long)dbCouponData["ammount"],
                             expireDate = expire,
                             fullyUsedDate = used,
-                            serialNumber = (string)couponData["serialNumber"],
-                            imageUrl = (string)couponData["imageUrl"],
-                            id = ((string)couponData["company"] + (string)couponData["serialNumber"])
+                            serialNumber = (string)dbCouponData["serialNumber"],
+                            imageUrl = (string)dbCouponData["imageUrl"],
+                            id = snapshot.Id
 
                         };
                         couponsOutput.Add(couponToAdd);
-
                     }
-                    Console.WriteLine("");
                 }
+                    
 
-               string jsonString = JsonConvert.SerializeObject(couponsOutput);
+                    string jsonString = JsonConvert.SerializeObject(couponsOutput);
                 
-                return Ok(jsonString);
+                    return Ok(jsonString);
+                    
             }
             catch
             {
@@ -76,46 +91,58 @@ namespace MyCouponsServer.Controllers
         }
 
 
+        
 
-        // POST: api/Coupons/use/username/
+        // PUT: api/Coupons/useOrEdit/username
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=
 
-        [HttpPut("use/{username}/{type}")]
-        public async Task<IActionResult> ChangeCoupon(string username,string type, [FromForm] Coupon data)
+        [HttpPut]
+        public async Task<IActionResult> ChangeCoupon([FromForm] Coupon data)
         {
-            DocumentReference docRef = db.Collection($"Users/{username}/CouponsList").Document(data.id);
+            DocumentReference docRef = db.Collection("Coupons").Document(data.id);
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
             if (snapshot.Exists)
             {
-                Dictionary<string, object> snapDict = snapshot.ToDictionary();
+                Dictionary<string, object> dbCouponData = snapshot.ToDictionary();
 
-                foreach (KeyValuePair<string, object> pair in snapDict)
-                {
-                    Dictionary<string, object> usageData = (Dictionary<string, object>) pair.Value;
-                    if ((long) usageData["ammount"] < (long)data.ammount)
-                    {
-                        return BadRequest($"you only have {usageData["ammount"]} on this coupon");
-                    }
+                    ArrayList changedKeys = data.getChangedKeys();
 
-                    if (type == "edit")
+                    foreach (string key in changedKeys)
                     {
-                        usageData["originalAmmount"] = usageData["ammount"];
-                    }
-                    else if (type == "use")
-                    {
-                        usageData["ammount"] = (long)usageData["ammount"] - (long)data.ammount;
+                        if (key == "id" || (key == "ammount" && data.ammount==-1))
+                        {
+                            continue;
+                        }
+
+                        else if (key == "Image")
+                        {
+                            var stream = data.Image.OpenReadStream();
+                            string username = (string)dbCouponData["creator"];
+                            string imagePath = $"Users/{username}/CouponsImages/{docRef.Id}";
+                            storage.UploadObject(BucketName, imagePath, null, stream);
+
+                        // need that?
+                            dbCouponData["imageUrl"] = $"https://firebasestorage.googleapis.com/v0/b/{BucketName}/o/Users%2F{username}%2FCouponsImages%2F{docRef.Id}?alt=media";
+                        
+                        }
+                        else
+                        {
+                            dbCouponData[key] = data.getValue(key);
+                        }
+                        
                     }
                     
 
-                    if ((long)usageData["ammount"] == 0)
+                    if ((long)dbCouponData["ammount"] == 0)
                     {
-
-                        usageData["fullyUsedDate"] = Timestamp.FromDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc));
+                        dbCouponData["fullyUsedDate"] = Timestamp.FromDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc));
                     }
 
-                    docRef.SetAsync(snapDict);
-                }
-                return Ok();
+                    docRef.SetAsync(dbCouponData);
+                    
+                    return Ok(dbCouponData);
+                
+                
             }
 
             return BadRequest("Couldnt change");
@@ -126,65 +153,46 @@ namespace MyCouponsServer.Controllers
         //    return Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(datetimeStr), DateTimeKind.Utc));
         //}
 
-
-        public class Image
-        {
-
-            public int Id { get; set; }
-            public string FileName { get; set; }
-            public byte[] Picture { get; set; }
-
-        }
-
         // POST: api/Coupons/newcoupon/username
-        [HttpPost("newcoupon/{username}")]
-        public async Task<IActionResult> AddCoupon(string username, [FromForm] Coupon data)
+        [HttpPost("newcoupon")]
+        public async Task<IActionResult> AddCoupon([FromForm] Coupon data)
         {
-            string imageUrl;
-            try
-            {
-                var stream = data.Image.OpenReadStream();
-                // Construct FirebaseStorage with path to where you want to upload the file and put it there
-                var task = new FirebaseStorage("mycoupons-6058d.appspot.com")
-                 .Child("Users")
-                 .Child($"{username}")
-                 .Child("CouponsList")
-                 .Child($"{data.id}")
-                 .PutAsync(stream);
-
-                 imageUrl = await task;
-
-            }
-            catch
-            {
-                imageUrl = "";
-            }
-
 
             try
             {
-                DocumentReference docRef = db.Collection("Users").Document($"{username}/CouponsList/{data.id}");
                 Timestamp expireDate = Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(data.expireDateStr), DateTimeKind.Utc));
                 Timestamp fullyUsedDate = new Timestamp();
                 Dictionary<string, object> coupon = new Dictionary<string, object>
-            {
-                    { "id",data.id },
+                {
+                    { "creator",data.creator },
                     { "company",data.company },
                     { "ammount",data.ammount },
                     { "originalAmmount",data.ammount },
                     { "expireDate",expireDate },
                     { "serialNumber",data.serialNumber },
-                    { "imageUrl",imageUrl },
                     { "fullyUsedDate",fullyUsedDate }
-            };
+                };
 
-                Dictionary<string, object> couponToAdd = new Dictionary<string, object>
-            {
-                { data.id,coupon }
-            };
-                docRef.SetAsync(couponToAdd);
+                DocumentReference docRef = await db.Collection("Coupons").AddAsync(coupon);
 
+                string imageUrl;
+                try
+                {
+                    var stream = data.Image.OpenReadStream();
+                    string imagePath = $"Users/{data.creator}/CouponsImages/{docRef.Id}";
+                    storage.UploadObject("mycouponsstorage.appspot.com", imagePath, null, stream);
+                    imageUrl = $"https://firebasestorage.googleapis.com/v0/b/{BucketName}/o/Users%2F{data.creator}%2FCouponsImages%2F{docRef.Id}?alt=media";                
+                }
+                catch
+                {
+                    imageUrl = "";
+                }
 
+                coupon["imageUrl"] = imageUrl;
+                await docRef.SetAsync(coupon);
+                Dictionary<string, object> empty = new Dictionary<string, object>() ;
+                await db.Collection("Users").Document($"{data.creator}/CouponsList/{docRef.Id}").SetAsync(empty);
+                coupon["id"]=docRef.Id;
 
                 return Ok(coupon);
             }
@@ -194,20 +202,44 @@ namespace MyCouponsServer.Controllers
             }
         }
 
-        // DELETE: api/Coupons/use/{username}/{id}
-        [HttpDelete ("delete/{username}/{id}")]
-        public async Task<IActionResult> DeleteCoupon(string username,string id)
+        // DELETE: api/Coupons
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCoupon([FromForm] Coupon data)
         {
-            DocumentReference docRef = db.Collection($"Users/{username}/CouponsList").Document(id);
+            string id = data.id;
+            string username = data.creator;
+
+            DocumentReference userDoc = db.Collection($"Users/{username}/CouponsList").Document(id);
+            DocumentReference couponDoc = db.Collection($"Coupons").Document(id);
             DocumentReference archive = db.Collection($"Archive/CouponsList/{username}").Document(id);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            DocumentSnapshot snapshot = await couponDoc.GetSnapshotAsync();
             if (snapshot.Exists)
             {
+                //move coupon to archive
                 Dictionary<string, object> docDict = snapshot.ToDictionary();
                 docDict.Add("dateDeleted", Timestamp.FromDateTime(DateTime.SpecifyKind(Convert.ToDateTime(DateTime.Now), DateTimeKind.Utc)));
                 archive.SetAsync(docDict);
 
-                await docRef.DeleteAsync();
+                await couponDoc.DeleteAsync();
+                await userDoc.DeleteAsync();
+
+                //move image to archive
+                try
+                {
+                    
+                    string sourceObjectName = $"Users/{username}/CouponsImages/{id}";
+                    string destObjectName = $"Archive/Users/{username}/CouponsImages/{id}";
+                    
+                    storage.CopyObject(BucketName, sourceObjectName, BucketName, destObjectName);
+                    storage.DeleteObject(BucketName, sourceObjectName);
+
+
+                }
+                catch
+                {
+                    Console.WriteLine("couldnt move image to archive");
+                }
+
 
                 return Ok("Deleted");
             }

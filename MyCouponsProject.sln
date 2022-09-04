@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCouponsServer", "MyCouponsServer\MyCouponsServer.csproj", "{CE232016-0057-4958-B7A0-14D5FAB1E365}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsProject", "TestProject1\UnitTestsProject.csproj", "{1288DB3E-F85D-4896-81A1-1C79E73AFFAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestsProject", "TestProject1\UnitTestsProject.csproj", "{1288DB3E-F85D-4896-81A1-1C79E73AFFAB}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "mycouponsclient", "MyCouponsClient\mycouponsclient.esproj", "{081EAAC2-DE2C-4A24-AE56-A69B302E0414}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{1288DB3E-F85D-4896-81A1-1C79E73AFFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1288DB3E-F85D-4896-81A1-1C79E73AFFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1288DB3E-F85D-4896-81A1-1C79E73AFFAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{081EAAC2-DE2C-4A24-AE56-A69B302E0414}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

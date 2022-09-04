@@ -10,6 +10,6 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>MyCouponsServer.Models.CouponContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
-    <NameOfLastUsedPublishProfile>C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\Properties\PublishProfiles\MyCouponsServer - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\yarinkagal\OneDrive - Microsoft\Desktop\Personal\Projects\New\MyCouponsProject\MyCouponsServer\Properties\PublishProfiles\MyCouponsOrganizer - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

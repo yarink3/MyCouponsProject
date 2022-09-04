@@ -8,16 +8,45 @@
     ".NETCoreApp,Version=v6.0": {
       "MyCouponsServer/1.0.0": {
         "dependencies": {
+          "FireSharp": "2.0.4",
+          "FirebaseStorage.net": "1.0.3",
           "Google.Cloud.Firestore": "3.0.0",
+          "Google.Cloud.Storage.V1": "4.1.0",
           "Microsoft.AspNet.WebApi.Cors": "5.2.9",
           "Microsoft.EntityFrameworkCore.InMemory": "6.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.6",
           "Microsoft.EntityFrameworkCore.Tools": "6.0.6",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "6.0.6",
+          "SendGrid": "9.28.1",
           "Swashbuckle.AspNetCore": "6.2.3"
         },
         "runtime": {
           "MyCouponsServer.dll": {}
+        }
+      },
+      "FirebaseStorage.net/1.0.3": {
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/netstandard1.1/Firebase.Storage.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "FireSharp/2.0.4": {
+        "dependencies": {
+          "Microsoft.Bcl.Async": "1.0.168",
+          "Microsoft.Net.Http": "2.2.28",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/portable-net45+sl5+wp8+win8/FireSharp.dll": {
+            "assemblyVersion": "2.0.3.0",
+            "fileVersion": "2.0.3.0"
+          }
         }
       },
       "Google.Api.CommonProtos/2.6.0": {
@@ -47,7 +76,7 @@
         "dependencies": {
           "Google.Api.CommonProtos": "2.6.0",
           "Google.Api.Gax": "4.0.0",
-          "Google.Apis.Auth": "1.56.0",
+          "Google.Apis.Auth": "1.57.0",
           "Grpc.Auth": "2.46.3",
           "Grpc.Core.Api": "2.46.3",
           "Grpc.Net.Client": "2.46.0",
@@ -60,41 +89,66 @@
           }
         }
       },
-      "Google.Apis/1.56.0": {
+      "Google.Api.Gax.Rest/4.0.0": {
         "dependencies": {
-          "Google.Apis.Core": "1.56.0"
+          "Google.Api.Gax": "4.0.0",
+          "Google.Apis.Auth": "1.57.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Google.Api.Gax.Rest.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "Google.Apis/1.57.0": {
+        "dependencies": {
+          "Google.Apis.Core": "1.57.0"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.dll": {
-            "assemblyVersion": "1.56.0.0",
-            "fileVersion": "1.56.0.0"
+            "assemblyVersion": "1.57.0.0",
+            "fileVersion": "1.57.0.0"
           }
         }
       },
-      "Google.Apis.Auth/1.56.0": {
+      "Google.Apis.Auth/1.57.0": {
         "dependencies": {
-          "Google.Apis": "1.56.0",
-          "Google.Apis.Core": "1.56.0"
+          "Google.Apis": "1.57.0",
+          "Google.Apis.Core": "1.57.0"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll": {
-            "assemblyVersion": "1.56.0.0",
-            "fileVersion": "1.56.0.0"
+            "assemblyVersion": "1.57.0.0",
+            "fileVersion": "1.57.0.0"
           },
           "lib/netstandard2.0/Google.Apis.Auth.dll": {
-            "assemblyVersion": "1.56.0.0",
-            "fileVersion": "1.56.0.0"
+            "assemblyVersion": "1.57.0.0",
+            "fileVersion": "1.57.0.0"
           }
         }
       },
-      "Google.Apis.Core/1.56.0": {
+      "Google.Apis.Core/1.57.0": {
         "dependencies": {
           "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
           "lib/netstandard2.0/Google.Apis.Core.dll": {
-            "assemblyVersion": "1.56.0.0",
-            "fileVersion": "1.56.0.0"
+            "assemblyVersion": "1.57.0.0",
+            "fileVersion": "1.57.0.0"
+          }
+        }
+      },
+      "Google.Apis.Storage.v1/1.57.0.2742": {
+        "dependencies": {
+          "Google.Apis": "1.57.0",
+          "Google.Apis.Auth": "1.57.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.Storage.v1.dll": {
+            "assemblyVersion": "1.57.0.2742",
+            "fileVersion": "1.57.0.2742"
           }
         }
       },
@@ -135,6 +189,18 @@
           }
         }
       },
+      "Google.Cloud.Storage.V1/4.1.0": {
+        "dependencies": {
+          "Google.Api.Gax.Rest": "4.0.0",
+          "Google.Apis.Storage.v1": "1.57.0.2742"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Google.Cloud.Storage.V1.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.1.0.0"
+          }
+        }
+      },
       "Google.LongRunning/3.0.0": {
         "dependencies": {
           "Google.Api.Gax.Grpc": "4.0.0"
@@ -156,7 +222,7 @@
       },
       "Grpc.Auth/2.46.3": {
         "dependencies": {
-          "Google.Apis.Auth": "1.56.0",
+          "Google.Apis.Auth": "1.57.0",
           "Grpc.Core.Api": "2.46.3"
         },
         "runtime": {
@@ -285,6 +351,30 @@
           }
         }
       },
+      "Microsoft.Bcl/1.1.9": {
+        "dependencies": {
+          "Microsoft.Bcl.Build": "1.0.14"
+        }
+      },
+      "Microsoft.Bcl.Async/1.0.168": {
+        "dependencies": {
+          "Microsoft.Bcl": "1.1.9"
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Threading.Tasks.Extensions.Desktop.dll": {
+            "assemblyVersion": "1.0.168.0",
+            "fileVersion": "1.0.168.0"
+          },
+          "lib/net40/Microsoft.Threading.Tasks.Extensions.dll": {
+            "assemblyVersion": "1.0.12.0",
+            "fileVersion": "1.0.168.0"
+          },
+          "lib/net40/Microsoft.Threading.Tasks.dll": {
+            "assemblyVersion": "1.0.12.0",
+            "fileVersion": "1.0.168.0"
+          }
+        }
+      },
       "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
@@ -293,6 +383,7 @@
           }
         }
       },
+      "Microsoft.Bcl.Build/1.0.14": {},
       "Microsoft.Build/17.0.0": {
         "dependencies": {
           "Microsoft.Build.Framework": "17.0.0",
@@ -1285,6 +1376,22 @@
           }
         }
       },
+      "Microsoft.Net.Http/2.2.28": {
+        "dependencies": {
+          "Microsoft.Bcl": "1.1.9",
+          "Microsoft.Bcl.Build": "1.0.14"
+        },
+        "runtime": {
+          "lib/net45/System.Net.Http.Extensions.dll": {
+            "assemblyVersion": "2.2.28.0",
+            "fileVersion": "2.2.28.0"
+          },
+          "lib/net45/System.Net.Http.Primitives.dll": {
+            "assemblyVersion": "4.2.28.0",
+            "fileVersion": "4.2.28.0"
+          }
+        }
+      },
       "Microsoft.NET.StringTools/1.0.0": {
         "dependencies": {
           "System.Memory": "4.5.4",
@@ -1685,6 +1792,26 @@
       "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {},
       "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {},
       "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {},
+      "SendGrid/9.28.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "starkbank-ecdsa": "1.3.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SendGrid.dll": {
+            "assemblyVersion": "9.28.1.0",
+            "fileVersion": "9.28.1.0"
+          }
+        }
+      },
+      "starkbank-ecdsa/1.3.3": {
+        "runtime": {
+          "lib/netstandard2.1/StarkbankEcdsa.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.2.3": {
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "3.0.0",
@@ -2522,6 +2649,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "FirebaseStorage.net/1.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SupDHNUwNqcVwEo/HdFEWAXveQe3fU16q4wrrCxUVwP0a77zaddKp7vo2sHIW56DAsJn/gUfjDK3w0MuBhvzjQ==",
+      "path": "firebasestorage.net/1.0.3",
+      "hashPath": "firebasestorage.net.1.0.3.nupkg.sha512"
+    },
+    "FireSharp/2.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-laSHpVUBG6iCTUixmpeUmYxie2zbziOBM+LU0v2A0ETE9dUyBA+8aY63xql/o8LXj+kFybBLYUKBUrLCZWaq+A==",
+      "path": "firesharp/2.0.4",
+      "hashPath": "firesharp.2.0.4.nupkg.sha512"
+    },
     "Google.Api.CommonProtos/2.6.0": {
       "type": "package",
       "serviceable": true,
@@ -2543,26 +2684,40 @@
       "path": "google.api.gax.grpc/4.0.0",
       "hashPath": "google.api.gax.grpc.4.0.0.nupkg.sha512"
     },
-    "Google.Apis/1.56.0": {
+    "Google.Api.Gax.Rest/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Oi/M8PmtmXo+3gBX0ZxaijQULuZKnNjDNIceRA+OcUUn3pmYhljGSAWcsWUY64KgdzurM9kF5MoCSWqevzR/UA==",
-      "path": "google.apis/1.56.0",
-      "hashPath": "google.apis.1.56.0.nupkg.sha512"
+      "sha512": "sha512-YFoxv4UNP7Hn8Eask0FqwMbCAfBs5hUlzronJgFGVXcStohtKc0Mi+2YqgGN82nynx75jVWEF7siSLBwkmZsHA==",
+      "path": "google.api.gax.rest/4.0.0",
+      "hashPath": "google.api.gax.rest.4.0.0.nupkg.sha512"
     },
-    "Google.Apis.Auth/1.56.0": {
+    "Google.Apis/1.57.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/TXElJg0lP47/MdYKtzWnrf2suwovKmeHslyUbyITQ9SGby4yj7Aj07QOufc9FjdciA8MrNZXsEqExID7LKblw==",
-      "path": "google.apis.auth/1.56.0",
-      "hashPath": "google.apis.auth.1.56.0.nupkg.sha512"
+      "sha512": "sha512-30V7T2G98HQjfI6y0AzBOXJUu7j7Trl1ZzH0e6DKmUaXNCvdMPwxApjBKESeTOkWjMdFRmkpAGyDEoxim+Xq1A==",
+      "path": "google.apis/1.57.0",
+      "hashPath": "google.apis.1.57.0.nupkg.sha512"
     },
-    "Google.Apis.Core/1.56.0": {
+    "Google.Apis.Auth/1.57.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-mhntBSe9/bXVP6EeB2g+Db6N4dzVYL12t+nkVcNTZzaI6fEFIp1l5BggmMMk6vY1Q/HUpZ5iHA/+h7j2pWWX5w==",
-      "path": "google.apis.core/1.56.0",
-      "hashPath": "google.apis.core.1.56.0.nupkg.sha512"
+      "sha512": "sha512-xNY9rprn3iih1H5dymbxxHeZggn4bMYKtYdwO3Yr+Cj06f6xrxnL0LqEi1bmG46LBY2FlVMy9NKIF99tZ6ZBZg==",
+      "path": "google.apis.auth/1.57.0",
+      "hashPath": "google.apis.auth.1.57.0.nupkg.sha512"
+    },
+    "Google.Apis.Core/1.57.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5wuY88PewhfaWsk37EEHcwU6CFqxpaWMm20ogWLXmaCw8NbTlV/Lna0gjtr2jpTLgb3mtVa7RC1AG/mgi530SQ==",
+      "path": "google.apis.core/1.57.0",
+      "hashPath": "google.apis.core.1.57.0.nupkg.sha512"
+    },
+    "Google.Apis.Storage.v1/1.57.0.2742": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pQigIarHnG+ahQprulXXOCCWYSyVawMfaRjwkSKCmdgsvBsxvm/L2HckSsYNM4XEGeljBahO2u8u64KyWCopEQ==",
+      "path": "google.apis.storage.v1/1.57.0.2742",
+      "hashPath": "google.apis.storage.v1.1.57.0.2742.nupkg.sha512"
     },
     "Google.Cloud.Firestore/3.0.0": {
       "type": "package",
@@ -2584,6 +2739,13 @@
       "sha512": "sha512-qxJ6dATru5XYQzuE8f3izGKPE14Zpc5mEBEROMM/FXYzMug+3ezoRktcD00l2nmMeJ7CIwWZjx9uRpDIiZTLEA==",
       "path": "google.cloud.location/2.0.0",
       "hashPath": "google.cloud.location.2.0.0.nupkg.sha512"
+    },
+    "Google.Cloud.Storage.V1/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ngGafYPmNuHDrnGbUB99Lv4489F1buaMLoZl7ZzhynA4M5/t1KP9ar5hmN62aX8kyea7Kg9ucSbKSQFsAS+tlg==",
+      "path": "google.cloud.storage.v1/4.1.0",
+      "hashPath": "google.cloud.storage.v1.4.1.0.nupkg.sha512"
     },
     "Google.LongRunning/3.0.0": {
       "type": "package",
@@ -2690,12 +2852,33 @@
       "path": "microsoft.aspnetcore.razor.language/6.0.0",
       "hashPath": "microsoft.aspnetcore.razor.language.6.0.0.nupkg.sha512"
     },
+    "Microsoft.Bcl/1.1.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-USQ55innJy8K+tAXvVa1O8dUTp2s7pmJ5cJj6Tl02HtGc2xBDj0P2QH5620HbGXIWKWYhydoeQF8Rm/JRDBGhw==",
+      "path": "microsoft.bcl/1.1.9",
+      "hashPath": "microsoft.bcl.1.1.9.nupkg.sha512"
+    },
+    "Microsoft.Bcl.Async/1.0.168": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tUNC02eBwDKpGre0BcNIvblLv1q0Q3DnS/vtkRHj2FE1sXwt386HAudztyl5C0U88hllrqHDvtlz8bK0Y8cHDA==",
+      "path": "microsoft.bcl.async/1.0.168",
+      "hashPath": "microsoft.bcl.async.1.0.168.nupkg.sha512"
+    },
     "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
       "path": "microsoft.bcl.asyncinterfaces/6.0.0",
       "hashPath": "microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512"
+    },
+    "Microsoft.Bcl.Build/1.0.14": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cDLKSvNvRa519hplsbSoYqO69TjdDIhfjtKUM0g20/nVROoWsGav9KCI9HtnGjLmdV1+TcUUDhbotcllibjPEA==",
+      "path": "microsoft.bcl.build/1.0.14",
+      "hashPath": "microsoft.bcl.build.1.0.14.nupkg.sha512"
     },
     "Microsoft.Build/17.0.0": {
       "type": "package",
@@ -3026,6 +3209,13 @@
       "path": "microsoft.identitymodel.tokens/6.8.0",
       "hashPath": "microsoft.identitymodel.tokens.6.8.0.nupkg.sha512"
     },
+    "Microsoft.Net.Http/2.2.28": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hPL9k+rPIpAj84RZSq3WtJkOD9uMStBovAIAz/0OQ+9hQIwQ2XqQlAhMqI4kw0XDxweJySIqNTMlkhRRuthcPQ==",
+      "path": "microsoft.net.http/2.2.28",
+      "hashPath": "microsoft.net.http.2.2.28.nupkg.sha512"
+    },
     "Microsoft.NET.StringTools/1.0.0": {
       "type": "package",
       "serviceable": true,
@@ -3326,6 +3516,20 @@
       "sha512": "sha512-VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg==",
       "path": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "hashPath": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512"
+    },
+    "SendGrid/9.28.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LyIkgjd+svXuQxpqe5pvyOccyUdKcDqwnBNDPjyCngkKeVpXAOTAr3U1DBLWqHEbFHvu2UBFki3SJzDwxvJdfA==",
+      "path": "sendgrid/9.28.1",
+      "hashPath": "sendgrid.9.28.1.nupkg.sha512"
+    },
+    "starkbank-ecdsa/1.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OblOaKb1enXn+dSp7tsx9yjwV+/BEKM9jFhshIkZTwCk7LuTFTp+wSon6rFzuPiIiTGtvVWQNUw2slHjGktJog==",
+      "path": "starkbank-ecdsa/1.3.3",
+      "hashPath": "starkbank-ecdsa.1.3.3.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.2.3": {
       "type": "package",
