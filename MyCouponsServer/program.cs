@@ -83,7 +83,7 @@ async void checkCouponsForMails()
             Query allCoupons = db.Collection($"Coupons");
             QuerySnapshot allCouponsSnapshot = await allCoupons.GetSnapshotAsync();
             DateTime now = DateTime.Now;
-            while (now.Hour == 9) {
+            while (now.Hour != 9) {
                 int hours = 9-now.Hour;
                 int minutes = 60-now.Minute;
 
